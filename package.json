@@ -4,7 +4,9 @@
   "description": "Spotify Data Transformation and Analysis task for Stage Sphinx Junior Cloud Developer position",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx tsc",
+    "start": "node dist/server.js",
+    "test": "jest --forceExit --coverage --verbose"
   },
   "author": "Mantas Matijošaitis",
   "license": "ISC",
@@ -21,6 +23,8 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "express": "^4.18.3"
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "winston": "^3.12.0"
   }
 }
