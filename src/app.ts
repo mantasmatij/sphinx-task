@@ -1,9 +1,10 @@
 import express from 'express'
 import { Readable } from 'stream'
-import readFile from './fileRead.js'
+import readFile from './util/fileRead.js'
 
 const app = express()
-const port = 3000
+
+app.set('port', process.env.PORT ?? 3000)
 const artistsFilePath = './data/artists.csv'
 const tracksFilePath = './data/tracks.csv'
 
@@ -18,10 +19,4 @@ readTracks.on('data', (line) => {
   console.log(line)
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
-app.listen(port, () => {
-  console.log(`Express izs listening at http://localhost:${port}`)
-})
+export default app
