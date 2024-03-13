@@ -6,8 +6,12 @@ async function * readFile (filePath: string): AsyncGenerator<string> {
   const rl = readline.createInterface({
     input: readStream
   })
-
+  let firstLine = true
   for await (const line of rl) {
+    if (firstLine) {
+      firstLine = false
+      return
+    }
     yield line
   }
 }
