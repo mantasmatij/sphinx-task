@@ -1,19 +1,17 @@
 import fs from 'fs'
-import readline from 'readline'
+import Papa from 'papaparse'
 
-async function * readFile (filePath: string): AsyncGenerator<string> {
-  const readStream = fs.createReadStream(filePath)
-  const rl = readline.createInterface({
-    input: readStream
+function readFile (filePath: string): any {
+  const file = fs.createReadStream(filePath)
+  const parseStream = Papa.parse(Papa.NODE_STREAM_INPUT, {
+    header: true
   })
-  let firstLine = true
-  for await (const line of rl) {
-    if (firstLine) {
-      firstLine = false
-      return
-    }
-    yield line
-  }
+  file.pipe(parseStream)
+  parseStream.on('end', function () {
+    console.log('Finished!')
+  })
+
+  return parseStream // Add a return statement here
 }
 
 export default readFile
