@@ -24,6 +24,7 @@ const transformArtist = new stream.Transform({
   }
 })
 
+
 const trackFileStream = fs.createReadStream(tracksFilePath, { encoding: 'utf8' })
 const fileOutputStream = fs.createWriteStream('./data/filteredTracks.csv')
 
