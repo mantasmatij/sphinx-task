@@ -1,14 +1,17 @@
-export function parseCsvToTrack (line: string): Track {
-  const fixedLine = line.replace(/"/g, '')
-  const [firstPart, lastPart] = fixedLine.split('],[')
-  if (lastPart === undefined || lastPart.length === 0) {
-    throw new Error('Invalid line')
-  }
-  const [lineBeforeArtists, artists] = firstPart.split(',[')
-  const [idArtists, lineAfterIdArtists] = lastPart.split('],')
-  const [id, name, popularity, durationMs, explicit] = lineBeforeArtists.split(',')
-  const [releaseDate, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, timeSignature] = lineAfterIdArtists.split(',')
+export function isLongerThanAMinute (track: Track): boolean {
+  return track.duration_ms >= 60000
+}
+
+export function hasAName (track: Track): boolean {
+  return track.name !== ''
+}
+
+export function chunkToTrack (chunk: any): Track {
+  const escapedIdArtists = chunk.id_artists.replace(/['\[\]]/g, '').split(',')
+
+  const releaseDate = chunk.release_date.toString()
   let [releaseYear, releaseMonth, releaseDay] = releaseDate.split('-')
+
   if (releaseYear === undefined) {
     releaseYear = '1900'
   }
@@ -19,7 +22,7 @@ export function parseCsvToTrack (line: string): Track {
     releaseDay = '1'
   }
   let danceabilityValue = Danceability.LOW
-  const danceabilityNumber = parseFloat(danceability)
+  const danceabilityNumber = parseFloat(chunk.danceability as string)
   if (danceabilityNumber >= 0.5) {
     danceabilityValue = Danceability.MEDIUM
   }
@@ -27,29 +30,37 @@ export function parseCsvToTrack (line: string): Track {
     danceabilityValue = Danceability.HIGH
   }
 
+  if (chunk.id === null || chunk.id === undefined || chunk.id === '') {
+    chunk.id = uuidv4()
+  }
+
+  if (chunk.name === null || chunk.id === undefined || chunk.id === '') {
+    chunk.name = ''
+  }
+
   return {
-    id,
-    name,
-    popularity: parseInt(popularity),
-    duration_ms: parseInt(durationMs),
-    explicit: explicit === '1',
-    artists: artists.split(','),
-    id_artists: idArtists.split(','),
-    release_year: parseInt(releaseYear),
-    release_moth: parseInt(releaseMonth),
-    release_day: parseInt(releaseDay),
+    id: chunk.id.toString(),
+    name: chunk.name.toString(),
+    popularity: parseInt(chunk.popularity as string),
+    duration_ms: parseInt(chunk.duration_ms as string),
+    explicit: parseInt(chunk.explicit as string),
+    artists: chunk.artists.split(','),
+    id_artists: escapedIdArtists,
+    release_year: parseInt(releaseYear as string),
+    release_month: parseInt(releaseMonth as string),
+    release_day: parseInt(releaseDay as string),
     danceability: danceabilityValue,
-    energy: parseFloat(energy),
-    key: parseInt(key),
-    loudness: parseFloat(loudness),
-    mode: parseInt(mode),
-    speechiness: parseFloat(speechiness),
-    acousticness: parseFloat(acousticness),
-    instrumentalness: parseFloat(instrumentalness),
-    liveness: parseFloat(liveness),
-    valence: parseFloat(valence),
-    tempo: parseFloat(tempo),
-    time_signature: parseInt(timeSignature)
+    energy: parseFloat(chunk.energy as string),
+    key: parseInt(chunk.key as string),
+    loudness: parseFloat(chunk.loudness as string),
+    mode: parseInt(chunk.mode as string),
+    speechiness: parseFloat(chunk.speechiness as string),
+    acousticness: parseFloat(chunk.acousticness as string),
+    instrumentalness: parseFloat(chunk.instrumentalness as string),
+    liveness: parseFloat(chunk.liveness as string),
+    valence: parseFloat(chunk.valence as string),
+    tempo: parseFloat(chunk.tempo as string),
+    time_signature: parseInt(chunk.time_signature as string)
   }
 }
 
@@ -58,11 +69,11 @@ export interface Track {
   name: string
   popularity: number
   duration_ms: number
-  explicit: boolean
+  explicit: number
   artists: string[]
   id_artists: string[]
   release_year: number
-  release_moth: number
+  release_month: number
   release_day: number
   danceability: Danceability
   energy: number
@@ -79,7 +90,15 @@ export interface Track {
 }
 
 export enum Danceability {
-  LOW,
-  MEDIUM,
-  HIGH
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High'
+}
+
+function uuidv4 (): string {
+  return 'xxxxxxxxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
 }

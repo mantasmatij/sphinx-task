@@ -1,26 +1,17 @@
-export function parseCsvToArtist (line: string): Artist {
-  try {
-    const fixedLine = line.replace(/"/g, '')
-    const [beforeGenres, secondPart] = fixedLine.split(/,\[(.*)/s)
-    const [genres, lastPart] = secondPart.split(/\],(.*)/s)
-    const [id, followers] = beforeGenres.split(',')
-    const [name, popularity] = lastPart.split(',')
-    let genresArray: string[] = []
-    if (genres !== undefined && genres.length !== 0) {
-      genresArray = genres.split(',')
-    }
+import { checkIfArtistHasTracks } from '../database'
 
-    return {
-      id,
-      followers: parseFloat(followers),
-      genres: genresArray,
-      name,
-      popularity: parseInt(popularity)
-    }
-  } catch (error) {
-    console.error(error)
-    console.log('line: ', line)
-    throw new Error('Invalid line')
+export async function hasTracks (artist: Artist): Promise<boolean> {
+  return await checkIfArtistHasTracks(artist)
+}
+
+export function chunkToArtist (chunk: any): Artist {
+  const escapedGenres = chunk.genres.replace(/['\[\]]/g, '').split(',')
+  return {
+    id: chunk.id.toString(),
+    followers: parseFloat(chunk.followers as string),
+    genres: escapedGenres,
+    name: chunk.name.toString(),
+    popularity: parseInt(chunk.popularity as string)
   }
 }
 
