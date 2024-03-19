@@ -4,7 +4,7 @@
   "description": "Spotify Data Transformation and Analysis task for Stage Sphinx Junior Cloud Developer position",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "npx prisma migrate reset && npx tsc",
     "start": "node dist/server.js",
     "test": "jest --forceExit --coverage --verbose"
   },
@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/papaparse": "^5.3.14",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "eslint": "^8.57.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
@@ -20,9 +21,12 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.34.0",
     "jest": "^29.7.0",
+    "prisma": "^5.11.0",
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "@prisma/client": "^5.11.0",
+    "aws-sdk": "^2.1580.0",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "papaparse": "^5.4.1",
