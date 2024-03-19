@@ -5,6 +5,7 @@ import fs from 'fs'
 import stream from 'stream'
 import { createArtist, createTrack } from './database'
 import { type Artist, chunkToArtist, hasTracks } from './types/artist'
+import { uploadFile } from './util/awsFileStorage'
 const app = express()
 
 app.set('port', process.env.PORT ?? 3000)
@@ -24,9 +25,10 @@ const transformArtist = new stream.Transform({
   }
 })
 
-
 const trackFileStream = fs.createReadStream(tracksFilePath, { encoding: 'utf8' })
 const fileOutputStream = fs.createWriteStream('./data/filteredTracks.csv')
+const artistFileStream = fs.createReadStream('./data/artists.csv', { encoding: 'utf8' })
+const artistOutputStream = fs.createWriteStream('./data/filteredArtists.csv')
 
 trackFileStream
   .pipe(new stream.PassThrough({
@@ -57,6 +59,8 @@ trackFileStream
   })
   .on('end', () => {
     console.log('Done processing tracks.')
+    console.log('Uploading file to S3...')
+    void uploadFile('./data/filteredTracks.csv', 'sphinx-files')
     processArtists.resume().filter(hasTracks)
       .on('data', (artist) => {
         void createArtist(artist as Artist)
@@ -70,11 +74,10 @@ trackFileStream
       })
       .on('end', () => {
         console.log('Done processing artists.')
+        console.log('Uploading file to S3...')
+        void uploadFile('./data/filteredArtists.csv', 'sphinx-files')
       })
   })
-
-const artistFileStream = fs.createReadStream('./data/artists.csv', { encoding: 'utf8' })
-const artistOutputStream = fs.createWriteStream('./data/filteredArtists.csv')
 
 const processArtists = artistFileStream
   .pipe(new stream.PassThrough({
