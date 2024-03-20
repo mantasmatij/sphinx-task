@@ -1,14 +1,8 @@
-import { checkIfArtistHasTracks } from '../database'
-
-export async function hasTracks (artist: Artist): Promise<boolean> {
-  return await checkIfArtistHasTracks(artist)
-}
-
 export function chunkToArtist (chunk: any): Artist {
   const escapedGenres = chunk.genres.replace(/['\[\]]/g, '').split(',')
   return {
     id: chunk.id.toString(),
-    followers: parseFloat(chunk.followers as string),
+    followers: parseFloat((chunk.followers ?? 0) as string),
     genres: escapedGenres,
     name: chunk.name.toString(),
     popularity: parseInt(chunk.popularity as string)
