@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { type Danceability, type Track } from './types/track.js'
+import { addArtistId, type Danceability, type Track } from './types/track.js'
 import { type Artist } from './types/artist.js'
 import logger from './util/logger.js'
 
@@ -12,6 +12,7 @@ export async function createTrack (track: Track): Promise<Track | undefined> {
       ...createdTrack,
       danceability: createdTrack.danceability as Danceability
     }
+    await addArtistId(parsedCreatedTrack.id_artists)
     return parsedCreatedTrack
   } catch (error) {
     logger.error(error)

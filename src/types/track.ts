@@ -1,9 +1,25 @@
+import { type Artist } from './artist'
+
+// let artistIds: string[] = []
+
 export function isLongerThanAMinute (track: Track): boolean {
   return track.duration_ms >= 60000
 }
 
 export function hasAName (track: Track): boolean {
   return track.name !== ''
+}
+
+const artistIds = new Set<string>()
+
+export async function addArtistId (ids: string[]): Promise<void> {
+  for (const id of ids) {
+    artistIds.add(id)
+  }
+}
+
+export function hasTracks (artist: Artist): boolean {
+  return artistIds.has(artist.id)
 }
 
 export function chunkToTrack (chunk: any): Track {

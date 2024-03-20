@@ -1,10 +1,11 @@
 import express from 'express'
-import { chunkToTrack, hasAName, isLongerThanAMinute, type Track } from './types/track'
+import { chunkToTrack, hasAName, isLongerThanAMinute, hasTracks, type Track } from './types/track'
 import Papa from 'papaparse'
 import fs from 'fs'
 import stream from 'stream'
 import { createArtist, createTrack } from './database'
-import { type Artist, chunkToArtist, hasTracks } from './types/artist'
+import { type Artist, chunkToArtist } from './types/artist'
+import { uploadFile } from './util/awsFileStorage'
 const app = express()
 
 app.set('port', process.env.PORT ?? 3000)
@@ -24,10 +25,10 @@ const transformArtist = new stream.Transform({
   }
 })
 
-
 const trackFileStream = fs.createReadStream(tracksFilePath, { encoding: 'utf8' })
 const fileOutputStream = fs.createWriteStream('./data/filteredTracks.csv')
 
+console.log('Processing tracks...')
 trackFileStream
   .pipe(new stream.PassThrough({
     objectMode: true,
@@ -57,6 +58,11 @@ trackFileStream
   })
   .on('end', () => {
     console.log('Done processing tracks.')
+    console.log('Uploading filtered tracks to S3...')
+    uploadFile('./data/filteredTracks.csv', 'sphinx-files').on('end', () => {
+      console.log('Filtered tracks uploaded to S3.')
+    })
+    console.log('Processing artists...')
     processArtists.resume().filter(hasTracks)
       .on('data', (artist) => {
         void createArtist(artist as Artist)
@@ -70,6 +76,11 @@ trackFileStream
       })
       .on('end', () => {
         console.log('Done processing artists.')
+        console.log('Uploading filtered artists to S3...')
+        setTimeout(() => {}, 1000)
+        uploadFile('./data/filteredArtists.csv', 'sphinx-files').on('end', () => {
+          console.log('Filtered artists uploaded to S3.')
+        })
       })
   })
 
