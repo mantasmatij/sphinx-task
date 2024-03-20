@@ -27,6 +27,8 @@ const transformArtist = new stream.Transform({
 
 const trackFileStream = fs.createReadStream(tracksFilePath, { encoding: 'utf8' })
 const fileOutputStream = fs.createWriteStream('./data/filteredTracks.csv')
+const artistFileStream = fs.createReadStream('./data/artists.csv', { encoding: 'utf8' })
+const artistOutputStream = fs.createWriteStream('./data/filteredArtists.csv')
 
 console.log('Processing tracks...')
 trackFileStream
@@ -83,9 +85,6 @@ trackFileStream
         })
       })
   })
-
-const artistFileStream = fs.createReadStream('./data/artists.csv', { encoding: 'utf8' })
-const artistOutputStream = fs.createWriteStream('./data/filteredArtists.csv')
 
 const processArtists = artistFileStream
   .pipe(new stream.PassThrough({
