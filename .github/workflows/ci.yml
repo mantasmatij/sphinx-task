@@ -29,6 +29,4 @@ jobs:
           jira-token: ${{ secrets.JIRA_TOKEN }}
           jira-domain: ${{ secrets.JIRA_DOMAIN }}
           jira-project: "SSYNC"
-          release-prefix: "Connex Release"
-          major-version: ${{ steps.get-major.outputs.major }}
-          tickets: ${{ steps.extract-tickets.outputs.tickets }}
+          release-name: Connex Release ${steps.get-major.outputs.major}
