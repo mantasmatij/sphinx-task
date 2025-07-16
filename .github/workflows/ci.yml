@@ -30,3 +30,4 @@ jobs:
           jira-domain: ${{ secrets.JIRA_DOMAIN }}
           jira-project: "SSYNC"
           release-name: Connex Release ${steps.get-major.outputs.major}
+          tickets: ${{ steps.extract-tickets.outputs.tickets }}
