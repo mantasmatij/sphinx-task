@@ -29,5 +29,5 @@ jobs:
           jira-token: ${{ secrets.JIRA_TOKEN }}
           jira-domain: ${{ secrets.JIRA_DOMAIN }}
           jira-project: "SSYNC"
+          jira-ticket-prefis: "SSYNC"
           release-name: ${{ steps.get-release-name.outputs.release-name }}
-          tickets: ${{ steps.extract-tickets.outputs.tickets }}
