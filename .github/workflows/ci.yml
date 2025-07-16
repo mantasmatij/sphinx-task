@@ -7,9 +7,6 @@ jobs:
   jira-release-link:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Get Release name
         id: get-release-name
         run: |
