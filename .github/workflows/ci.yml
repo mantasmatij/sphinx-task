@@ -10,12 +10,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract SSYNC tickets from commit messages
-        id: extract-tickets
-        run: |
-          tickets=$(git log -1 --pretty=%B | grep -oE 'SSYNC-[0-9]+' | sort | uniq | paste -sd "," -)
-          echo "tickets=$tickets" >> $GITHUB_OUTPUT
-
       - name: Get Release name
         id: get-release-name
         run: |
