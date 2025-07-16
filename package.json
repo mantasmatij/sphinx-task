@@ -1,6 +1,6 @@
 {
   "name": "sphinx-task",
-  "version": "1.0.0",
+  "version": "13.0.0",
   "description": "Spotify Data Transformation and Analysis task for Stage Sphinx Junior Cloud Developer position",
   "main": "index.js",
   "scripts": {

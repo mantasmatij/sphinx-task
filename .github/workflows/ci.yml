@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  jira-release-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract SSYNC tickets from commit messages
+        id: extract-tickets
+        run: |
+          tickets=$(git log -1 --pretty=%B | grep -oE 'SSYNC-[0-9]+' | sort | uniq | paste -sd "," -)
+          echo "tickets=$tickets" >> $GITHUB_OUTPUT
+
+      - name: Get major version
+        id: get-major
+        run: |
+          major=$(jq -r '.version' package.json | cut -d. -f1)
+          echo "major=$major" >> $GITHUB_OUTPUT
+
+      - name: Create Jira release link
+        uses: mantasmatij/jira-release-link@latest
+        with:
+          jira-email: ${{ secrets.JIRA_EMAIL }}
+          jira-token: ${{ secrets.JIRA_TOKEN }}
+          jira-domain: ${{ secrets.JIRA_DOMAIN }}
+          jira-project: "SSYNC"
+          jira-release-prefix: "Connex Release"
+          major-version: ${{ steps.get-major.outputs.major }}
+          tickets: ${{ steps.extract-tickets.outputs.tickets }}
