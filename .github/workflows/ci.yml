@@ -16,11 +16,11 @@ jobs:
           tickets=$(git log -1 --pretty=%B | grep -oE 'SSYNC-[0-9]+' | sort | uniq | paste -sd "," -)
           echo "tickets=$tickets" >> $GITHUB_OUTPUT
 
-      - name: Get major version
-        id: get-major
+      - name: Get Release name
+        id: get-release-name
         run: |
           major=$(jq -r '.version' package.json | cut -d. -f1)
-          echo "major=$major" >> $GITHUB_OUTPUT
+          echo "release-name=Connex Release $major" >> $GITHUB_OUTPUT
 
       - name: Create Jira release link
         uses: mantasmatij/jira-release-link@main
@@ -29,5 +29,5 @@ jobs:
           jira-token: ${{ secrets.JIRA_TOKEN }}
           jira-domain: ${{ secrets.JIRA_DOMAIN }}
           jira-project: "SSYNC"
-          release-name: Connex Release ${steps.get-major.outputs.major}
+          release-name: ${{ steps.get-release-name.outputs.release-name }}
           tickets: ${{ steps.extract-tickets.outputs.tickets }}
