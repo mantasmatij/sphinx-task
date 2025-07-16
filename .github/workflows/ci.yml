@@ -23,7 +23,7 @@ jobs:
           echo "major=$major" >> $GITHUB_OUTPUT
 
       - name: Create Jira release link
-        uses: mantasmatij/jira-release-link@latest
+        uses: mantasmatij/jira-release-link@main
         with:
           jira-email: ${{ secrets.JIRA_EMAIL }}
           jira-token: ${{ secrets.JIRA_TOKEN }}
