@@ -17,7 +17,7 @@ jobs:
           echo "release-name=Connex Release $major" >> $GITHUB_OUTPUT
 
       - name: Create Jira release link
-        uses: mantasmatij/jira-release-link@1.1.5
+        uses: mantasmatij/jira-release-link@1.1.6
         with:
           jira-email: ${{ secrets.JIRA_EMAIL }}
           jira-token: ${{ secrets.JIRA_TOKEN }}
