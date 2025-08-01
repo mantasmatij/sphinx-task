@@ -36,4 +36,3 @@ jobs:
           jira-project: SSYNC
           jira-ticket-key-prefix: SSYNC
           release-name: ${{ steps.get-release-name.outputs.release-name }}
-          release-name-regex: "Connex Release ([0-9]+)"
